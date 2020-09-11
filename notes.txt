@@ -1,0 +1,5 @@
+* implement server side with node js
+* html layout + css
+* react
+
+* 
