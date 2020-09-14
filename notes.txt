@@ -2,7 +2,7 @@
 * html layout + css
 * react
 * database: mongoDB
-
 * search for apartments, list your own apartments, my apartments, stars, send a private msg
-, upload pictures
-, advanced search
+,* upload pictures
+* advanced search
+
