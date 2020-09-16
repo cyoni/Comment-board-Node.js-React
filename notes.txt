@@ -6,4 +6,4 @@
 ,* upload pictures
 * advanced search
 * html5
-
+* forum
