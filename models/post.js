@@ -7,7 +7,8 @@ const blogPostSchema = new Schema({
    date: {
       type: String,
       default: Date.now()
-   }
+   },
+   key: String
 })
 
 const blogPost = mongoose.model('blogPost', blogPostSchema)

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const blogPost = require('../models/post')
-
+const mongoose = require('mongoose')
 
 router.post('/api/save', (req, res) => {
    console.log(req.body)
@@ -20,8 +20,15 @@ router.post('/api/save', (req, res) => {
    })
 })
 
-router.get('/api', (req, res) => {
+router.post('/api/removePost', (req, res) => {
 
+   mongoose.model('blogPost').deleteOne({ _id: req.body.key }, (err, something) => {
+      console.log(something)
+   })
+})
+
+
+router.get('/api', (req, res) => {
    blogPost.find({})
       .then((data) => {
          console.log('data: ', data)
@@ -30,8 +37,6 @@ router.get('/api', (req, res) => {
       .catch((error) => {
          console.log('error: ', error)
       })
-
-
 })
 
 

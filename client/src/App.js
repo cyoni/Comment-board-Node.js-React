@@ -4,6 +4,7 @@ import axios from 'axios';
 class App extends React.Component {
 
 
+
   state = {
     title: '',
     body: '',
@@ -38,8 +39,6 @@ class App extends React.Component {
       title: this.state.title,
       body: this.state.body
     }
-
-
     axios({
       url: 'api/save',
       method: 'POST',
@@ -62,12 +61,36 @@ class App extends React.Component {
     })
   }
 
+  removePost = (key) => {
+    
+    axios({
+      url: 'api/removePost',
+      method: 'POST',
+      data: {key: key}
+    })
+      .then(() => {
+        console.log('data has been sent')
+      })
+      .catch(() => {
+        console.log('there is a problem!')
+      })
+  }
+
   printPosts = () => {
+    
     const posts = this.state.posts
+   
     return posts.map((post, index) => (
+  
       <div className="post" key={index}>
         <h3>{post.title}</h3>
         <p>{post.body}</p>
+        <div className="post_links">
+          <ul>
+            <li><a>Edit</a></li>
+            <li><a onClick={this.removePost.bind(this, post._id)}>Remove</a></li>
+          </ul>
+        </div>
       </div>
     ))
   }
