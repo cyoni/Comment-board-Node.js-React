@@ -6,7 +6,8 @@ class App extends React.Component {
 
   state = {
     title: '',
-    body: ''
+    body: '',
+    posts: []
   }
 
   handleChange = ({ target }) => {
@@ -14,6 +15,22 @@ class App extends React.Component {
     this.setState({ [name]: value })
   }
 
+  componentDidMount = () => {
+    this.getPosts()
+  }
+
+
+  getPosts = () => {
+    axios.get('/api')
+      .then((response) => {
+        const data = response.data
+        this.setState({ posts: data })
+        console.log('data has been receoved')
+      })
+      .catch(() => {
+        console.log('error retrieving data')
+      })
+  }
 
   submit = (event) => {
     event.preventDefault()
@@ -22,21 +39,21 @@ class App extends React.Component {
       body: this.state.body
     }
 
+
     axios({
       url: 'api/save',
       method: 'POST',
       data: payload
     })
       .then(() => {
+        this.getPosts()
         console.log('data has been sent')
         this.resetFields()
       })
       .catch(() => {
         console.log('there is a problem!')
       })
-
   }
-
 
   resetFields = () => {
     this.setState({
@@ -45,18 +62,27 @@ class App extends React.Component {
     })
   }
 
-  render() {
+  printPosts = () => {
+    const posts = this.state.posts
+    return posts.map((post, index) => (
+      <div className="post" key={index}>
+        <h3>{post.title}</h3>
+        <p>{post.body}</p>
+      </div>
+    ))
+  }
 
-    console.log('state: ', this.state)
+  render() {
 
     return (
       <div>
-        <h2>hello</h2>
+        <h2>Posts</h2>
         <form onSubmit={this.submit}>
           <div className="form-input">
             <input
               type="text"
               name="title"
+              placeholder="title"
               value={this.state.title}
               onChange={this.handleChange}
             />
@@ -73,6 +99,11 @@ class App extends React.Component {
           </div>
           <button>Send</button>
         </form>
+
+        <div>
+          <h3>Latest Posts:</h3>
+          {this.printPosts()}
+        </div>
       </div>
     )
 
