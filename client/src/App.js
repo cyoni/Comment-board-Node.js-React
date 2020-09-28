@@ -3,12 +3,12 @@ import axios from 'axios';
 
 class App extends React.Component {
 
-
-
   state = {
     title: '',
     body: '',
-    posts: []
+    posts: [],
+    buttonTitle: 'Send',
+    isCancelButtonVisible: "none"
   }
 
   handleChange = ({ target }) => {
@@ -20,13 +20,12 @@ class App extends React.Component {
     this.getPosts()
   }
 
-
   getPosts = () => {
     axios.get('/api')
       .then((response) => {
         const data = response.data
         this.setState({ posts: data })
-        console.log('data has been receoved')
+        console.log('data has been received')
       })
       .catch(() => {
         console.log('error retrieving data')
@@ -37,7 +36,8 @@ class App extends React.Component {
     event.preventDefault()
     const payload = {
       title: this.state.title,
-      body: this.state.body
+      body: this.state.body,
+      postIdToEdit: this.state.postIdToEdit
     }
     axios({
       url: 'api/save',
@@ -57,38 +57,76 @@ class App extends React.Component {
   resetFields = () => {
     this.setState({
       title: '',
-      body: ''
+      body: '',
+      buttonTitle: 'Send',
+      postIdToEdit: null,
+      isCancelButtonVisible: "none"
     })
   }
 
   removePost = (key) => {
-    
     axios({
       url: 'api/removePost',
       method: 'POST',
-      data: {key: key}
+      data: { key: key }
     })
       .then(() => {
         console.log('data has been sent')
+        this.getPosts()
       })
       .catch(() => {
-        console.log('there is a problem!')
+        console.log('there is a problem')
       })
   }
 
-  printPosts = () => {
-    
+  loadPost = (postId) => {
+/*
+    this.setState(prevState => {
+      const updatedToDos = prevState.posts.map(todo => {
+        if (todo._id === postId) {
+          todo.title = " new title "
+        }
+        return todo
+      })
+      return {
+        posts: updatedToDos,
+      }
+    })
+    */
+
     const posts = this.state.posts
-   
+    posts.map(current => {
+      if (current._id === postId) {
+
+        this.setState({
+          title: current.title,
+          body: current.body,
+          buttonTitle: 'Edit',
+          postIdToEdit: postId, 
+          isCancelButtonVisible: "inline"
+        })
+      }
+    })
+
+  }
+
+  printPosts = () => {
+
+    const posts = this.state.posts
+
     return posts.map((post, index) => (
-  
+
       <div className="post" key={index}>
         <h3>{post.title}</h3>
         <p>{post.body}</p>
         <div className="post_links">
           <ul>
-            <li><a>Edit</a></li>
-            <li><a onClick={this.removePost.bind(this, post._id)}>Remove</a></li>
+            <li>
+              <span onClick={this.loadPost.bind(this, post._id)}>Edit</span>
+            </li>
+            <li>
+              <span onClick={this.removePost.bind(this, post._id)}>Remove</span>
+            </li>
           </ul>
         </div>
       </div>
@@ -120,7 +158,8 @@ class App extends React.Component {
               cols="30"
               rows="10" />
           </div>
-          <button>Send</button>
+          <button>{this.state.buttonTitle}</button>
+          <button onClick={this.resetFields} style={{ display: this.state.isCancelButtonVisible }}>Cancel</button>
         </form>
 
         <div>
